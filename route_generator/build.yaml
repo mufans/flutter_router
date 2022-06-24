@@ -1,0 +1,24 @@
+## Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
+builders:
+  routerRootBuilder:
+    import: "package:route_generator/route_generator.dart"
+    builder_factories: ["routerRootBuilder"]
+    build_extensions: { ".dart": [".router.g.part"] }
+    auto_apply: dependents
+    build_to: source
+
+  routerBuilder:
+    import: "package:route_generator/route_generator.dart"
+    builder_factories: ["routerBuilder"]
+    build_extensions: { ".dart": [".router.g.part"] }
+    auto_apply: dependents
+    build_to: cache
+    runs_before: ['route_generator|routerRootBuilder']
+
+  interceptorBuilder:
+    import: "package:route_generator/route_generator.dart"
+    builder_factories: [ "interceptorBuilder" ]
+    build_extensions: { ".dart": [ ".interceptor.g.part" ] }
+    auto_apply: dependents
+    build_to: cache
+    runs_before: [ 'route_generator|routerBuilder' ]
