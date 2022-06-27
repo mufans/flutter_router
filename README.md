@@ -1,13 +1,13 @@
 # flutter_router
 
-参考**Arouter** 和 **annotation_route**实现的flutter路由库，支持多模块通信。
+参考**Arouter** 和 **annotation_route**实现的flutter路由库，聚合多模块路由表并支持多模块通信。
 
 
 
 ### 功能
 
 - 支持flutter原生页面路由
-- 支持多模块通信
+- 支持多模块路由通信
 - 支持自定义路由拦截器
 
 
