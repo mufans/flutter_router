@@ -20,8 +20,21 @@
 包含三个模块
 
 - **jrouter_core**                         路由核心库
-- **router_generator**               路由apt库,用于生成一些模板代码
-- **flutter_router_support**     扩展路由支持flutter
+- **router_generator**               路由apt库,解析dart注解生成模板代码
+- **flutter_router_support**     扩展路由支持flutter。
+
+#### 说明
+
+三个模块依赖关系 
+
+- runtime:
+flutter_router_support->jrouter_core   
+- dev:
+router_generator->jrouter_core
+
+**为什么需要flutter_router_support?**
+
+由于dart注解解析使用了反射，并且flutter不支持反射，所以jrouter_core没有依赖flutter sdk. 为了支持flutter路由跳转,单独封装了flutter路由的转换逻辑，因此在初始化时需要配置路由扩展.
 
 
 
@@ -58,7 +71,7 @@ class SecondPage extends StatefulWidget {
   State<SecondPage> createState() => _SecondPageState();
 }
 
-/// 协议路由
+/// 协议路由 Protocol实现了IProvider接口（参考Arouter设计，用于区分协议路由和页面路由)
 @JRoute(path: BaseRoute.protocol)
 class BizModule1Protocol extends Protocol {
   @override
@@ -143,11 +156,10 @@ class _JRouter$bizGroup implements IRouteGroup {
 3. 路由初始化
 
 ```dart
-	/// 注册各个模块的路由
-	JRouter.init(
-      [MainRouteHolder(), BizModule1RouteHolder(), BizModule2RouteHolder()]);
+  /// 注册各个模块的路由表
+  JRouter.init([MainRouteHolder(), BizModule1RouteHolder(), BizModule2RouteHolder()]);
 
-	/// 添加flutter路由扩展
+  /// 添加flutter路由扩展
   JRouter.setHook(flutterRouterHook);
 
 ```
@@ -157,10 +169,11 @@ class _JRouter$bizGroup implements IRouteGroup {
 4. 注册页面路由表
 
 ```dart
-	/// 注册本地路由
+   /// 初始化时可动态注册本地路由
   JRouter.register({"/": (_) => MyHomePage(title: 'Flutter Demo Home Page')});
 
-	MaterialApp(
+  /// 注册命名路由
+  MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -182,7 +195,7 @@ class _JRouter$bizGroup implements IRouteGroup {
  /// 获取协议接口
  Protocol? protocol = await JRouter.navigation(BaseRoute.protocol);
  
- /// flutter页面跳转
+ /// flutter页面跳转,支持传参
  JRouter.navigation("/biz/secondPage", context: context);
 ```
 
